@@ -10,17 +10,4 @@ For further reference, please consider the following sections:
 ## Sources Used
 
 * [Checkers - WikiPedia](https://en.wikipedia.org/wiki/Checkers)
-* [Spring Boot Tutorial – Bootstrap a Simple Application](https://www.baeldung.com/spring-boot-start)
-* [SpringSource - GitHub](https://github.com/eugenp/tutorials/tree/master/spring-boot-modules/spring-boot-bootstrap/src/main)
 * [Java JFrame](https://www.javatpoint.com/java-jframe)
-
-* [Checkers Examples - GitHub](https://github.com/topics/checkers?l=java)
-* [Mchristos/checkers - GitHub](https://github.com/DevonMcGrath/Java-Checkers)
-
-* [Checkers Examples - GitHub](https://edoras.sdsu.edu/doc/javanotes7.0.1/source/chapter7/Checkers.java)
-
-
-        
-        
-        
-        
