@@ -17,6 +17,7 @@ For further reference, please consider the following sections:
 * [Mchristos/checkers - GitHub](https://github.com/DevonMcGrath/Java-Checkers)
 * [DevonMcGrath/Java-Checkers  - GitHub](https://github.com/DevonMcGrath/Java-Checkers)
 * [Checkers Examples - SDSU.edu](https://edoras.sdsu.edu/doc/javanotes7.0.1/source/chapter7/Checkers.java)
+* [tk-codes/checkers - Github](https://github.com/tk-codes/checkers)
 
 
         
