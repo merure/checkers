@@ -1,5 +1,7 @@
 package com.merure.checkers.game;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -13,9 +15,12 @@ public class UI extends JPanel implements ActionListener, MouseListener {
 
     protected JButton resignButton;
 
-    protected JLabel message;
+    protected static JLabel message;
 
     protected Board board;
+
+    @Autowired
+    State state;
 
     UI() {
         setBackground(Color.BLACK);
@@ -32,8 +37,13 @@ public class UI extends JPanel implements ActionListener, MouseListener {
         message.setForeground(Color.black);
 
         board = new Board();
-        // Note: paintComponent is called by JPanel, responsible for checkerboard & checkers markup
+        State.setBoard(board); // Keep state of the board; TODO CheckersData
 
+        // Note: paintComponent is called by JPanel, responsible for checkerboard & checkers markup
+        updateUi();
+    }
+
+    public void updateUi() {
         repaint();
     }
 
@@ -96,14 +106,27 @@ public class UI extends JPanel implements ActionListener, MouseListener {
     }
 
     private void doNewGame() {
-        message.setText("New game started");
+        setUiMessage("New game started");
     }
 
     private void doResign() {
-        message.setText("Game resigned");
+        setUiMessage("Game resigned");
+    }
+
+    protected static void setUiMessage(String text) {
+        message.setText(text);
     }
 
     public void mousePressed(MouseEvent evt) {
+        if (State.gameInProgress == false)
+            UI.setUiMessage("Click \"New Game\" to start a new game.");
+        else {
+            int col = (evt.getX() - 2) / 20;
+            int row = (evt.getY() - 2) / 20;
+            if (col >= 0 && col < 8 && row >= 0 && row < 8)
+                Move.doClickSquare(row, col);
+                updateUi();
+        }
     }
 
     public void mouseReleased(MouseEvent evt) {

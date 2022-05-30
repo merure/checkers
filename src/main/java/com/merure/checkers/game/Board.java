@@ -43,5 +43,5 @@ public class Board {
                 }
             }
         }
-    }  // end setUpGame()
+    }
 }

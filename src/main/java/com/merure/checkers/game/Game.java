@@ -16,7 +16,7 @@ public class Game extends JPanel {
         setBackground(new Color(255, 255, 255));  // White background.
 
         // Assign UI components to JPanel
-        UI ui = new UI();
+        UI ui = new UI(); // Board
         add(ui);
         add(ui.newGameButton);
         add(ui.resignButton);
@@ -29,6 +29,5 @@ public class Game extends JPanel {
         ui.resignButton.setBounds(210, 120, 120, 30);
         ui.message.setBounds(0, 200, 350, 30);
     }
-
 
 }
