@@ -6,6 +6,8 @@ public class Board {
 
     State state;
 
+    UI ui;
+
     // States of fields on the checkers board (grid)
     static final int
             EMPTY = 0,
@@ -20,8 +22,9 @@ public class Board {
     /**
      * The grid representing the checkers board.
      */
-    Board(State state) {
+    Board(State state, UI ui) {
         this.state = state;
+        this.ui = ui;
         grid = new int[8][8];
         setUpGame();
     }
@@ -78,9 +81,9 @@ public class Board {
                 this.state.setSelectedRow(row);
                 this.state.setSelectedCol(col);
                 if (this.state.getCurrentPlayer() == RED) {
-                    UI.setUiMessage("RED: Make your move!");
+                    this.ui.setUiMessage("RED: Make your move!");
                 } else {
-                    UI.setUiMessage("BLACK: Make your move!");
+                    this.ui.setUiMessage("BLACK: Make your move!");
                 }
                 return;
             }
@@ -90,15 +93,15 @@ public class Board {
         int selectedCol = this.state.getSelectedCol();
 
         if (selectedRow < 0) {
-            UI.setUiMessage("Click the piece you want to move.");
+            this.ui.setUiMessage("Click the piece you want to move.");
             return;
         }
 
         // If the user clicked on a square where the selected piece can be legally moved, then make the move and return.
-        for (int i = 0; i < legalMoves.length; i++)
-            if (legalMoves[i].fromRow == selectedRow && legalMoves[i].fromCol == selectedCol
-                    && legalMoves[i].toRow == row && legalMoves[i].toCol == col) {
-                doMakeMove(legalMoves[i]);
+        for (Move legalMove : legalMoves)
+            if (legalMove.fromRow == selectedRow && legalMove.fromCol == selectedCol
+                    && legalMove.toRow == row && legalMove.toCol == col) {
+                doMakeMove(legalMove);
                 return;
             }
 
@@ -106,7 +109,7 @@ public class Board {
              the user just clicked is not one where that piece can be legally moved.
              Show an error message. */
 
-        UI.setUiMessage("Click the square you want to move to.");
+        this.ui.setUiMessage("Click the square you want to move to.");
 
     }
 
@@ -124,9 +127,14 @@ public class Board {
             this.state.legalMoves = getLegalJumpsFrom(this.state.currentPlayer, move.toRow, move.toCol);
             if (this.state.legalMoves != null) {
                 if (this.state.currentPlayer == RED) {
-                    UI.setUiMessage("RED: You must continue jumping.");
+                    this.ui.setUiMessage("RED: You must continue jumping.");
                 } else {
-                    UI.setUiMessage("BLACK: You must continue jumping.");
+                    if (this.state.isComputer && this.state.currentPlayer == BLACK) {
+                        Move randomJump = calculateRandomMove(this.state.legalMoves);
+                        doMakeMove(randomJump);
+                    } else {
+                        this.ui.setUiMessage("BLACK: You must continue jumping.");
+                    }
                 }
                 this.state.selectedRow = move.toRow;  // Since only one piece can be moved, select it.
                 this.state.selectedCol = move.toCol;
@@ -139,21 +147,21 @@ public class Board {
             this.state.currentPlayer = BLACK;
             this.state.legalMoves = this.state.boardState.getLegalMoves(this.state.currentPlayer);
             if (this.state.legalMoves == null) {
-                UI.setUiMessage("BLACK has no moves.  RED wins.");
+                this.ui.gameOver("BLACK lost all checkers, RED wins!");
             } else if (this.state.legalMoves[0].isJump()) {
-                UI.setUiMessage("BLACK: Make your move.  You must jump.");
+                this.ui.setUiMessage("BLACK: Make your move. You must jump.");
             } else {
-                UI.setUiMessage("BLACK: Make your move.");
+                this.ui.setUiMessage("BLACK: Make your move.");
             }
         } else {
             this.state.currentPlayer = RED;
             this.state.legalMoves = this.state.boardState.getLegalMoves(this.state.currentPlayer);
             if (this.state.legalMoves == null) {
-                UI.setUiMessage("RED has no moves.  BLACK wins.");
+                this.ui.gameOver("RED lost all checkers, BLACK wins.");
             } else if (this.state.legalMoves[0].isJump()) {
-                UI.setUiMessage("RED: Make your move.  You must jump.");
+                this.ui.setUiMessage("RED: Make your move. You must jump.");
             } else {
-                UI.setUiMessage("RED: Make your move.");
+                this.ui.setUiMessage("RED: Make your move.");
             }
         }
 
@@ -174,6 +182,25 @@ public class Board {
                 this.state.selectedCol = this.state.legalMoves[0].fromCol;
             }
         }
+
+        // Simple approach to make random selections for computer opponent.
+        if (this.state.currentPlayer == BLACK && this.state.isComputer) {
+            Move[] legalMoves = this.state.legalMoves;
+            if (legalMoves != null) {
+                Move randomMove = calculateRandomMove(legalMoves);
+                this.state.boardState.doMakeMove(randomMove);
+            }
+        }
+    }
+
+    /**
+     * Randomly selects a move.
+     *
+     * @param legalMoves possible moves to randomly select from
+     * @return a randomly selected move
+     */
+    Move calculateRandomMove(Move[] legalMoves) {
+        return legalMoves[(int) Math.floor(Math.random() * legalMoves.length)];
     }
 
     /**
@@ -304,7 +331,7 @@ public class Board {
             playerKing = RED_KING;
         else
             playerKing = BLACK_KING;
-        ArrayList<Move> moves = new ArrayList<Move>();  // The legal jumps will be stored in this list.
+        ArrayList<Move> moves = new ArrayList<>();  // The legal jumps will be stored in this list.
         if (grid[row][col] == player || grid[row][col] == playerKing) {
             if (canJump(player, row, col, row + 1, col + 1, row + 2, col + 2))
                 moves.add(new Move(row, col, row + 2, col + 2));
@@ -341,19 +368,19 @@ public class Board {
             return false;  // (r3,c3) already contains a piece.
 
         if (player == RED) {
-            if (grid[r1][c1] == RED && r3 > r1)
+            if (grid[r1][c1] == RED && r3 > r1) {
                 return false;  // Regular red piece can only move up.
-            if (grid[r2][c2] != BLACK && grid[r2][c2] != BLACK_KING)
+            }
+            if (grid[r2][c2] != BLACK && grid[r2][c2] != BLACK_KING) {
                 return false;  // There is no black piece to jump.
-            return true;  // The jump is legal.
+            }
         } else {
             if (grid[r1][c1] == BLACK && r3 < r1)
-                return false;  // Regular black piece can only move downn.
+                return false;  // Regular black piece can only move down.
             if (grid[r2][c2] != RED && grid[r2][c2] != RED_KING)
                 return false;  // There is no red piece to jump.
-            return true;  // The jump is legal.
         }
-
+        return true;  // The jump is legal.
     }
 
     /**
@@ -364,21 +391,21 @@ public class Board {
      */
     private boolean canMove(int player, int r1, int c1, int r2, int c2) {
 
-        if (r2 < 0 || r2 >= 8 || c2 < 0 || c2 >= 8)
+        if (r2 < 0 || r2 >= 8 || c2 < 0 || c2 >= 8) {
             return false;  // (r2,c2) is off the board.
-
-        if (grid[r2][c2] != EMPTY)
-            return false;  // (r2,c2) already contains a piece.
-
-        if (player == RED) {
-            if (grid[r1][c1] == RED && r2 > r1)
-                return false;  // Regular red piece can only move down.
-            return true;  // The move is legal.
-        } else {
-            if (grid[r1][c1] == BLACK && r2 < r1)
-                return false;  // Regular black piece can only move up.
-            return true;  // The move is legal.
         }
-
+        if (grid[r2][c2] != EMPTY) {
+            return false;  // (r2,c2) already contains a piece.
+        }
+        if (player == RED) {
+            if (grid[r1][c1] == RED && r2 > r1) {
+                return false;  // Regular red piece can only move down.
+            }
+        } else {
+            if (grid[r1][c1] == BLACK && r2 < r1) {
+                return false;  // Regular black piece can only move up.
+            }
+        }
+        return true;  // The move is legal.
     }
 }

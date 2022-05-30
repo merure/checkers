@@ -14,9 +14,13 @@ public class UI extends JPanel implements ActionListener, MouseListener {
 
     protected JButton newGameButton;
 
+    protected JButton NewGameAgainstPlayer;
+
+    protected JButton NewGameAgainstComputer;
+
     protected JButton resignButton;
 
-    protected static JLabel message;
+    protected JLabel message;
 
     protected Board board;
 
@@ -31,6 +35,12 @@ public class UI extends JPanel implements ActionListener, MouseListener {
         newGameButton = new JButton("New Game");
         newGameButton.addActionListener(this);
 
+        NewGameAgainstPlayer = new JButton("Vs Player");
+        NewGameAgainstPlayer.addActionListener(this);
+
+        NewGameAgainstComputer = new JButton("Vs Computer");
+        NewGameAgainstComputer.addActionListener(this);
+
         resignButton = new JButton("Resign");
         resignButton.addActionListener(this);
 
@@ -38,12 +48,12 @@ public class UI extends JPanel implements ActionListener, MouseListener {
         message.setFont(new Font("Arial", Font.BOLD, 14));
         message.setForeground(Color.black);
 
-        board = new Board(state);
+        board = new Board(state, this);
         state.setBoard(board);
 
         updateUi(); // Note: paintComponent is called by JPanel, responsible for checkerboard & checkers markup
         resignButton.setEnabled(false);
-        doNewGame();
+
     }
 
     /**
@@ -143,10 +153,34 @@ public class UI extends JPanel implements ActionListener, MouseListener {
      */
     public void actionPerformed(ActionEvent evt) {
         Object src = evt.getSource();
-        if (src == newGameButton)
+        if (src == newGameButton) {
+
+            // Hide previous buttons
+            newGameButton.setVisible(false);
+            resignButton.setVisible(false);
+
+            // Display Opponent type selection
+            NewGameAgainstPlayer.setVisible(true);
+            NewGameAgainstComputer.setVisible(true);
+
+        } else if (src == NewGameAgainstPlayer || src == NewGameAgainstComputer) {
+            this.state.isComputer = src == NewGameAgainstComputer;
+
+            // Show initial buttons
+            newGameButton.setVisible(true);
+            resignButton.setVisible(true);
+
+            // Display Opponent type selection
+            NewGameAgainstPlayer.setVisible(false);
+            NewGameAgainstComputer.setVisible(false);
+
+            // Start new game
             doNewGame();
-        else if (src == resignButton)
+
+        } else if (src == resignButton) {
             doResign();
+        }
+
     }
 
     /**
@@ -170,7 +204,7 @@ public class UI extends JPanel implements ActionListener, MouseListener {
             board.setUpGame(); // Set up the pieces.
 
             // Update UI
-            setUiMessage("New game started - Player: Make your move.");
+            setUiMessage("New game started - RED: Make your move.");
             newGameButton.setEnabled(false);
             resignButton.setEnabled(true);
             updateUi();
@@ -212,7 +246,8 @@ public class UI extends JPanel implements ActionListener, MouseListener {
         newGameButton.setEnabled(true);
         resignButton.setEnabled(false);
         this.state.gameInProgress = false;
-        updateUi();
+        board = new Board(state, this);
+        state.setBoard(board);
     }
 
     /**
@@ -220,7 +255,7 @@ public class UI extends JPanel implements ActionListener, MouseListener {
      *
      * @param text value displayed in JLabel.
      */
-    protected static void setUiMessage(String text) {
+    protected void setUiMessage(String text) {
         message.setText(text);
     }
 
@@ -231,13 +266,14 @@ public class UI extends JPanel implements ActionListener, MouseListener {
      */
     @Override
     public void mousePressed(MouseEvent evt) {
-        if (!this.state.gameInProgress)
-            setUiMessage("Click \"New Game\" to start a new game.");
-        else {
+        if (!this.state.gameInProgress) {
+            setUiMessage("Click \"New Game\" to start.");
+        } else {
             int col = (evt.getX() - 2) / 20;
             int row = (evt.getY() - 2) / 20;
-            if (col >= 0 && col < 8 && row >= 0 && row < 8)
+            if (col >= 0 && col < 8 && row >= 0 && row < 8) {
                 board.doClickSquare(row, col);
+            }
             updateUi();
         }
     }

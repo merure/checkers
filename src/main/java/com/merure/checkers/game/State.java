@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class State {
 
+    public boolean isComputer = true;
+
     public State() {
     }
 
@@ -23,8 +25,6 @@ public class State {
     protected Move[] legalMoves;  // An array containing the legal moves for the
 
     protected Board boardState; // Current state of the grid
-
-    protected String uiMessage; // Message to display on UI
 
     public void setBoard(Board board) {
         boardState = board;

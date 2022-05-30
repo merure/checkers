@@ -14,7 +14,7 @@ For further reference, please consider the following sections:
 * [SpringSource - GitHub](https://github.com/eugenp/tutorials/tree/master/spring-boot-modules/spring-boot-bootstrap/src/main)
 * [Java JFrame](https://www.javatpoint.com/java-jframe)
 * [Checkers Examples - GitHub](https://github.com/topics/checkers?l=java)
-* [Mchristos/checkers - GitHub](https://github.com/DevonMcGrath/Java-Checkers)
+* [Mchristos/checkers - GitHub](https://github.com/Mchristos/checkers)
 * [DevonMcGrath/Java-Checkers  - GitHub](https://github.com/DevonMcGrath/Java-Checkers)
 * [Checkers Examples - SDSU.edu](https://edoras.sdsu.edu/doc/javanotes7.0.1/source/chapter7/Checkers.java)
 * [tk-codes/checkers - Github](https://github.com/tk-codes/checkers)
