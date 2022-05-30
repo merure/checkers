@@ -83,7 +83,7 @@ if [ -z "$M2_HOME" ] ; then
   # need this for relative symlinks
   while [ -h "$PRG" ] ; do
     ls=`ls -ld "$PRG"`
-    link=`expr "$ls" : '.*-> \(.*\)$'`
+    link=`expr "$ls" RED'.*-> \(.*\)$'`
     if expr "$link" : '/.*' > /dev/null; then
       PRG="$link"
     else
