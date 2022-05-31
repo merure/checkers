@@ -302,4 +302,66 @@ class BoardTests {
             assertEquals(expectedMoves[i].toCol, legalMoves[i].toCol);
         }
     }
+
+    /**
+     * Black is allowed to jump Red from top left field on 1st row, to 3rd row in 3rd column.
+     */
+    @Test
+    void correctBlackLegalJumpRedScenario() {
+        int[][] updatedGrid = {
+                {3,0,0,0,0,0,0,0},
+                {0,1,0,0,0,0,0,0},
+                {0,0,0,0,0,0,0,0},
+                {0,0,0,0,0,0,0,0},
+                {0,0,0,0,0,0,0,0},
+                {0,0,0,0,0,0,0,0},
+                {0,0,0,0,0,0,0,0},
+                {0,0,0,0,0,0,0,0}
+        };
+
+        this.state.boardState.grid = updatedGrid;
+        Move[] legalJumps = this.state.boardState.getLegalJumpsFrom(Board.BLACK, 0, 0);
+
+        Move[] expectedMoves = {
+                new Move(0, 0, 2, 2)
+        };
+
+        for(int i = 0; i < expectedMoves.length; i++) {
+            assertEquals(expectedMoves[i].fromRow, legalJumps[i].fromRow);
+            assertEquals(expectedMoves[i].fromCol, legalJumps[i].fromCol);
+            assertEquals(expectedMoves[i].toRow, legalJumps[i].toRow);
+            assertEquals(expectedMoves[i].toCol, legalJumps[i].toCol);
+        }
+    }
+
+    /**
+     * Black King is allowed to jump Red backwards from 3rd row in 3rd column to top left field on 1st row.
+     */
+    @Test
+    void correctBlackKingLegalJumpBackRedScenario() {
+        int[][] updatedGrid = {
+                {0,0,0,0,0,0,0,0},
+                {0,1,0,0,0,0,0,0},
+                {0,0,4,0,0,0,0,0},
+                {0,0,0,0,0,0,0,0},
+                {0,0,0,0,0,0,0,0},
+                {0,0,0,0,0,0,0,0},
+                {0,0,0,0,0,0,0,0},
+                {0,0,0,0,0,0,0,0}
+        };
+
+        this.state.boardState.grid = updatedGrid;
+        Move[] legalJumps = this.state.boardState.getLegalJumpsFrom(Board.BLACK, 2, 2);
+
+        Move[] expectedMoves = {
+                new Move(2, 2, 0, 0)
+        };
+
+        for(int i = 0; i < expectedMoves.length; i++) {
+            assertEquals(expectedMoves[i].fromRow, legalJumps[i].fromRow);
+            assertEquals(expectedMoves[i].fromCol, legalJumps[i].fromCol);
+            assertEquals(expectedMoves[i].toRow, legalJumps[i].toRow);
+            assertEquals(expectedMoves[i].toCol, legalJumps[i].toCol);
+        }
+    }
 }
